@@ -137,8 +137,27 @@ exports.getSalesTrend = async (req, res) => {
       { $sort: { _id: 1 } },
     ]);
 
-    res.json(result);
+    // ✅ Convert into frontend-friendly format
+    const formatted = result.map((item) => ({
+      date: item._id,
+      revenue: item.totalRevenue,
+    }));
+
+    res.json(formatted);
   } catch (err) {
     res.status(500).json({ message: "Error fetching trend" });
+  }
+};
+
+
+exports.metadata = async (req, res) => {
+  try {
+    const categories = await Sales.distinct("category");
+    const regions = await Sales.distinct("region");
+
+    res.json({ categories, regions });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Error fetching metadata" });
   }
 };

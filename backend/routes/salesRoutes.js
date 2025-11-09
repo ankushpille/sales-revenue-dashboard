@@ -13,12 +13,14 @@ const {
   uploadSalesData,
   getTotalSalesRevenue,
   filterSales,
-  getSalesTrend
+  getSalesTrend,
+  metadata
 } = require('../controllers/salesController.js');
 
 router.post('/upload', upload.single('file'), uploadSalesData);
 router.get('/totals', getTotalSalesRevenue);
 router.get('/filter', filterSales);
 router.get('/trend', getSalesTrend);
+router.get('/meta', metadata)
 
 module.exports = router;
