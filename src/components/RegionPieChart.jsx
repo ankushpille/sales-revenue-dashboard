@@ -1,9 +1,17 @@
-import { PieChart, Pie, Tooltip, ResponsiveContainer, Cell, Legend } from "recharts";
 import { Box, Typography } from "@mui/material";
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
 const COLORS = [
-  '#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe',
-  '#00f2fe', '#43e97b', '#38f9d7', '#fa709a', '#fee140'
+  "#667eea",
+  "#764ba2",
+  "#f093fb",
+  "#f5576c",
+  "#4facfe",
+  "#00f2fe",
+  "#43e97b",
+  "#38f9d7",
+  "#fa709a",
+  "#fee140",
 ];
 
 const CustomTooltip = ({ active, payload }) => {
@@ -12,12 +20,12 @@ const CustomTooltip = ({ active, payload }) => {
     return (
       <Box
         sx={{
-          background: 'rgba(255, 255, 255, 0.95)',
-          backdropFilter: 'blur(10px)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          borderRadius: '12px',
-          padding: '12px 16px',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          background: "rgba(255, 255, 255, 0.95)",
+          backdropFilter: "blur(10px)",
+          border: "1px solid rgba(255, 255, 255, 0.2)",
+          borderRadius: "12px",
+          padding: "12px 16px",
+          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
         }}
       >
         <Typography variant="subtitle2" fontWeight={600} color="#2c3e50">
@@ -27,7 +35,7 @@ const CustomTooltip = ({ active, payload }) => {
           Revenue: ₹{data.value.toLocaleString()}
         </Typography>
         <Typography variant="caption" color="text.secondary">
-          {data.percent ? `${(data.percent * 100).toFixed(1)}%` : ''}
+          {data.percent ? `${(data.percent * 100).toFixed(1)}%` : ""}
         </Typography>
       </Box>
     );
@@ -35,9 +43,16 @@ const CustomTooltip = ({ active, payload }) => {
   return null;
 };
 
-const CustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
+const CustomLabel = ({
+  cx,
+  cy,
+  midAngle,
+  innerRadius,
+  outerRadius,
+  percent,
+}) => {
   if (percent < 0.05) return null; // Hide labels for slices smaller than 5%
-  
+
   const RADIAN = Math.PI / 180;
   const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
   const x = cx + radius * Math.cos(-midAngle * RADIAN);
@@ -48,13 +63,13 @@ const CustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) =>
       x={x}
       y={y}
       fill="white"
-      textAnchor={x > cx ? 'start' : 'end'}
+      textAnchor={x > cx ? "start" : "end"}
       dominantBaseline="central"
       fontSize={12}
       fontWeight={600}
       style={{
-        textShadow: '0px 1px 3px rgba(0,0,0,0.5)',
-        fontFamily: 'Inter, sans-serif'
+        textShadow: "0px 1px 3px rgba(0,0,0,0.5)",
+        fontFamily: "Inter, sans-serif",
       }}
     >
       {`${(percent * 100).toFixed(0)}%`}
@@ -66,36 +81,36 @@ const CustomLegend = ({ payload }) => {
   return (
     <Box
       sx={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
+        display: "flex",
+        flexWrap: "wrap",
+        justifyContent: "center",
         mt: 2,
-        gap: 1.5
+        gap: 1.5,
       }}
     >
       {payload.map((entry, index) => (
         <Box
           key={`legend-${index}`}
           sx={{
-            display: 'flex',
-            alignItems: 'center',
+            display: "flex",
+            alignItems: "center",
             gap: 0.5,
-            background: 'rgba(255, 255, 255, 0.8)',
-            padding: '4px 8px',
-            borderRadius: '8px',
-            border: '1px solid rgba(0, 0, 0, 0.1)',
-            fontSize: '0.75rem',
+            background: "rgba(255, 255, 255, 0.8)",
+            padding: "4px 8px",
+            borderRadius: "8px",
+            border: "1px solid rgba(0, 0, 0, 0.1)",
+            fontSize: "0.75rem",
             fontWeight: 500,
-            color: '#2c3e50',
+            color: "#2c3e50",
           }}
         >
           <Box
             sx={{
               width: 12,
               height: 12,
-              borderRadius: '50%',
+              borderRadius: "50%",
               backgroundColor: entry.color,
-              boxShadow: '0px 2px 4px rgba(0,0,0,0.2)',
+              boxShadow: "0px 2px 4px rgba(0,0,0,0.2)",
             }}
           />
           {entry.value}
@@ -124,15 +139,19 @@ export default function RegionPieChart({ data }) {
       <Box
         sx={{
           height: 300,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-          borderRadius: '16px',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
+          borderRadius: "16px",
+          border: "1px solid rgba(255, 255, 255, 0.2)",
         }}
       >
-        <Typography variant="h6" color="text.secondary" className="float-animation">
+        <Typography
+          variant="h6"
+          color="text.secondary"
+          className="float-animation"
+        >
           🌍 No regional data available
         </Typography>
       </Box>
@@ -167,8 +186,8 @@ export default function RegionPieChart({ data }) {
                 key={`cell-${index}`}
                 fill={COLORS[index % COLORS.length]}
                 style={{
-                  filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.1))',
-                  transition: 'all 0.3s ease'
+                  filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
+                  transition: "all 0.3s ease",
                 }}
               />
             ))}
@@ -179,7 +198,7 @@ export default function RegionPieChart({ data }) {
       <CustomLegend
         payload={chartData.map((entry, index) => ({
           value: entry.name,
-          color: COLORS[index % COLORS.length]
+          color: COLORS[index % COLORS.length],
         }))}
       />
     </Box>

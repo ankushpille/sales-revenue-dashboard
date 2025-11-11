@@ -1,24 +1,27 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchSales, fetchTrend, fetchTotals } from "../redux/slices/salesSlice";
-
 import {
+  Avatar,
   Box,
   Card,
-  Grid,
-  Typography,
+  Chip,
   CircularProgress,
   Fade,
+  Grid,
+  Typography,
   Zoom,
-  Avatar,
-  Chip,
 } from "@mui/material";
+import {
+  fetchSales,
+  fetchTotals,
+  fetchTrend,
+} from "../redux/slices/salesSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 
-import ProductBarChart from "../components/ProductBarChart";
-import RevenueLineChart from "../components/RevenueLineChart";
-import RegionPieChart from "../components/RegionPieChart";
-import Filters from "../components/Filters";
 import FileUpload from "../components/FileUpload";
+import Filters from "../components/Filters";
+import ProductBarChart from "../components/ProductBarChart";
+import RegionPieChart from "../components/RegionPieChart";
+import RevenueLineChart from "../components/RevenueLineChart";
 
 export default function Dashboard() {
   const dispatch = useDispatch();
@@ -30,7 +33,7 @@ export default function Dashboard() {
     dispatch(fetchSales());
     dispatch(fetchTrend("monthly"));
     dispatch(fetchTotals());
-  }, [refresh]);
+  }, [refresh, dispatch]);
 
   if (loading)
     return (
@@ -51,7 +54,7 @@ export default function Dashboard() {
             thickness={3}
             sx={{
               color: "white",
-              filter: "drop-shadow(0px 4px 8px rgba(0,0,0,0.3))"
+              filter: "drop-shadow(0px 4px 8px rgba(0,0,0,0.3))",
             }}
           />
         </Box>
@@ -61,7 +64,7 @@ export default function Dashboard() {
             mt: 3,
             color: "white",
             fontWeight: 600,
-            textShadow: "0px 2px 4px rgba(0,0,0,0.3)"
+            textShadow: "0px 2px 4px rgba(0,0,0,0.3)",
           }}
           className="fade-in-up"
         >
@@ -85,7 +88,8 @@ export default function Dashboard() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: "radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%), radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%)",
+          background:
+            "radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%), radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%)",
           pointerEvents: "none",
         },
       }}
@@ -105,7 +109,7 @@ export default function Dashboard() {
               display: "flex",
               alignItems: "center",
               gap: 2,
-              mb: 2
+              mb: 2,
             }}
           >
             <Avatar
@@ -114,7 +118,7 @@ export default function Dashboard() {
                 height: 56,
                 background: "var(--success-gradient)",
                 fontSize: "1.5rem",
-                boxShadow: "var(--shadow-medium)"
+                boxShadow: "var(--shadow-medium)",
               }}
             >
               📊
@@ -124,12 +128,13 @@ export default function Dashboard() {
                 variant="h3"
                 fontWeight={800}
                 sx={{
-                  background: "linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%)",
+                  background:
+                    "linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
                   textShadow: "0px 4px 8px rgba(0,0,0,0.3)",
-                  fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" }
+                  fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
                 }}
                 className="slide-in-right"
               >
@@ -143,13 +148,14 @@ export default function Dashboard() {
               color: "rgba(255, 255, 255, 0.9)",
               fontSize: "1.1rem",
               fontWeight: 400,
-              textShadow: "0px 2px 4px rgba(0,0,0,0.2)"
+              textShadow: "0px 2px 4px rgba(0,0,0,0.2)",
             }}
             className="slide-in-right"
           >
-            Monitor product performance, revenue trends & regional insights with real-time analytics
+            Monitor product performance, revenue trends & regional insights with
+            real-time analytics
           </Typography>
-          
+
           <Box sx={{ mt: 2, display: "flex", gap: 1, flexWrap: "wrap" }}>
             <Chip
               label="Real-time Data"
@@ -158,7 +164,7 @@ export default function Dashboard() {
                 background: "rgba(255, 255, 255, 0.2)",
                 color: "white",
                 fontWeight: 500,
-                backdropFilter: "blur(10px)"
+                backdropFilter: "blur(10px)",
               }}
             />
             <Chip
@@ -168,7 +174,7 @@ export default function Dashboard() {
                 background: "rgba(255, 255, 255, 0.2)",
                 color: "white",
                 fontWeight: 500,
-                backdropFilter: "blur(10px)"
+                backdropFilter: "blur(10px)",
               }}
             />
             <Chip
@@ -178,7 +184,7 @@ export default function Dashboard() {
                 background: "rgba(255, 255, 255, 0.2)",
                 color: "white",
                 fontWeight: 500,
-                backdropFilter: "blur(10px)"
+                backdropFilter: "blur(10px)",
               }}
             />
           </Box>
@@ -198,10 +204,12 @@ export default function Dashboard() {
                 "&:hover": {
                   transform: "translateY(-4px)",
                   boxShadow: "var(--shadow-hard)",
-                }
+                },
               }}
             >
-              <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}>
+              <Box
+                sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}
+              >
                 <Avatar sx={{ background: "var(--primary-gradient)" }}>
                   📁
                 </Avatar>
@@ -240,7 +248,7 @@ export default function Dashboard() {
                   right: 0,
                   height: "4px",
                   background: "linear-gradient(90deg, #4b79a1, #283e51)",
-                }
+                },
               }}
             >
               <Typography variant="h6" fontWeight={600} mb={2}>
@@ -251,7 +259,8 @@ export default function Dashboard() {
                 fontWeight={800}
                 mb={1}
                 sx={{
-                  background: "linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%)",
+                  background:
+                    "linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
@@ -291,7 +300,7 @@ export default function Dashboard() {
                   right: 0,
                   height: "4px",
                   background: "linear-gradient(90deg, #4facfe, #00f2fe)",
-                }
+                },
               }}
             >
               <Typography variant="h6" fontWeight={600} mb={2}>
@@ -302,7 +311,8 @@ export default function Dashboard() {
                 fontWeight={800}
                 mb={1}
                 sx={{
-                  background: "linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%)",
+                  background:
+                    "linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
@@ -329,10 +339,12 @@ export default function Dashboard() {
                 "&:hover": {
                   transform: "translateY(-2px)",
                   boxShadow: "var(--shadow-medium)",
-                }
+                },
               }}
             >
-              <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}>
+              <Box
+                sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}
+              >
                 <Avatar sx={{ background: "var(--warning-gradient)" }}>
                   🔍
                 </Avatar>
@@ -340,7 +352,9 @@ export default function Dashboard() {
                   Advanced Filters
                 </Typography>
               </Box>
-              <Filters onFilterChange={(filters) => dispatch(fetchSales(filters))} />
+              <Filters
+                onFilterChange={(filters) => dispatch(fetchSales(filters))}
+              />
             </Card>
           </Zoom>
         </Grid>
@@ -360,11 +374,19 @@ export default function Dashboard() {
                 "&:hover": {
                   transform: "translateY(-4px)",
                   boxShadow: "var(--shadow-hard)",
-                }
+                },
               }}
             >
-              <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}>
-                <Avatar sx={{ background: "var(--primary-gradient)", width: 40, height: 40 }}>
+              <Box
+                sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}
+              >
+                <Avatar
+                  sx={{
+                    background: "var(--primary-gradient)",
+                    width: 40,
+                    height: 40,
+                  }}
+                >
                   📈
                 </Avatar>
                 <Typography variant="h6" fontWeight={700} color="#2c3e50">
@@ -390,11 +412,19 @@ export default function Dashboard() {
                 "&:hover": {
                   transform: "translateY(-4px)",
                   boxShadow: "var(--shadow-hard)",
-                }
+                },
               }}
             >
-              <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}>
-                <Avatar sx={{ background: "var(--secondary-gradient)", width: 40, height: 40 }}>
+              <Box
+                sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}
+              >
+                <Avatar
+                  sx={{
+                    background: "var(--secondary-gradient)",
+                    width: 40,
+                    height: 40,
+                  }}
+                >
                   🛒
                 </Avatar>
                 <Typography variant="h6" fontWeight={700} color="#2c3e50">
@@ -420,11 +450,19 @@ export default function Dashboard() {
                 "&:hover": {
                   transform: "translateY(-4px)",
                   boxShadow: "var(--shadow-hard)",
-                }
+                },
               }}
             >
-              <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}>
-                <Avatar sx={{ background: "var(--warning-gradient)", width: 40, height: 40 }}>
+              <Box
+                sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}
+              >
+                <Avatar
+                  sx={{
+                    background: "var(--warning-gradient)",
+                    width: 40,
+                    height: 40,
+                  }}
+                >
                   🌍
                 </Avatar>
                 <Typography variant="h6" fontWeight={700} color="#2c3e50">

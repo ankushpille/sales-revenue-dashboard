@@ -1,8 +1,9 @@
+import { Box, Button, Chip, MenuItem, TextField, } from "@mui/material";
 import { useEffect, useState } from "react";
-import { Box, TextField, MenuItem, Button, Chip, Typography, Avatar } from "@mui/material";
-import { useDispatch } from "react-redux";
-import { fetchSales } from "../redux/slices/salesSlice";
+
 import axios from "axios";
+import { fetchSales } from "../redux/slices/salesSlice";
+import { useDispatch } from "react-redux";
 
 const StyledTextField = ({ label, children, ...props }) => (
   <TextField
