@@ -1,33 +1,32 @@
-import {
-  Avatar,
-  Box,
-  Card,
-  Chip,
-  CircularProgress,
-  Fade,
-  Grid,
-  Typography,
-  Zoom,
-} from "@mui/material";
-import {
-  fetchSales,
-  fetchTotals,
-  fetchTrend,
-} from "../redux/slices/salesSlice";
+import { Avatar, Box, Card, Chip, Grid, Typography } from "@mui/material";
+import { fetchSales, fetchTotals, fetchTrend } from "../redux/slices/salesSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { motion } from "framer-motion";
 
 import FileUpload from "../components/FileUpload";
 import Filters from "../components/Filters";
 import ProductBarChart from "../components/ProductBarChart";
 import RegionPieChart from "../components/RegionPieChart";
 import RevenueLineChart from "../components/RevenueLineChart";
+import LoadingSpinner from "../components/common/LoadingSpinner";
+import StatCard from "../components/common/StatCard";
+import ChartCard from "../components/common/ChartCard";
+import WelcomeScreen from "../components/WelcomeScreen";
+import { formatNumber, formatCurrency } from "../utils/helpers";
+
+const MotionBox = motion.create(Box);
+const MotionCard = motion.create(Card);
 
 export default function Dashboard() {
   const dispatch = useDispatch();
   const { data, trend, totals, loading } = useSelector((state) => state.sales);
 
   const [refresh, setRefresh] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(false);
+  const uploadRef = useRef(null);
+  const chartsRef = useRef(null);
+  const summaryRef = useRef(null);
 
   useEffect(() => {
     dispatch(fetchSales());
@@ -35,43 +34,47 @@ export default function Dashboard() {
     dispatch(fetchTotals());
   }, [refresh, dispatch]);
 
-  if (loading)
+  useEffect(() => {
+    // Show welcome screen if no data
+    if (!loading && data.length === 0 && trend.length === 0) {
+      setShowWelcome(true);
+    } else {
+      setShowWelcome(false);
+    }
+  }, [data, trend, loading]);
+
+  const scrollToUpload = () => {
+    setShowWelcome(false);
+    setTimeout(() => {
+      uploadRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 100);
+  };
+
+  const scrollToCharts = () => {
+    // Scroll to summary cards (Total Sales/Revenue) instead of charts
+    summaryRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  if (loading) {
+    return <LoadingSpinner message="Loading Analytics Dashboard..." />;
+  }
+
+  if (showWelcome) {
     return (
       <Box
-        className="glass-effect"
         sx={{
-          height: "100vh",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
+          minHeight: "100vh",
           background: "var(--primary-gradient)",
+          position: "relative",
+          display: "flex",
+          alignItems: "center",
+          py: 4,
         }}
       >
-        <Box className="pulse-animation">
-          <CircularProgress
-            size={80}
-            thickness={3}
-            sx={{
-              color: "white",
-              filter: "drop-shadow(0px 4px 8px rgba(0,0,0,0.3))",
-            }}
-          />
-        </Box>
-        <Typography
-          variant="h5"
-          sx={{
-            mt: 3,
-            color: "white",
-            fontWeight: 600,
-            textShadow: "0px 2px 4px rgba(0,0,0,0.3)",
-          }}
-          className="fade-in-up"
-        >
-          Loading Analytics Dashboard...
-        </Typography>
+        <WelcomeScreen onUploadClick={scrollToUpload} />
       </Box>
     );
+  }
 
   return (
     <Box
@@ -95,383 +98,206 @@ export default function Dashboard() {
       }}
     >
       {/* Enhanced Header */}
-      <Fade in timeout={700}>
-        <Box
-          mb={5}
-          textAlign="left"
-          sx={{
-            position: "relative",
-            zIndex: 1,
-          }}
-        >
+      <MotionBox
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        mb={5}
+        textAlign="left"
+        sx={{ position: "relative", zIndex: 1 }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", gap: 3, mb: 2, flexWrap: "wrap" }}>
           <Box
             sx={{
+              width: 64,
+              height: 64,
               display: "flex",
               alignItems: "center",
-              gap: 2,
-              mb: 2,
+              justifyContent: "center",
+              background: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+              borderRadius: "20px",
+              fontSize: "2rem",
+              boxShadow: "0 8px 30px rgba(79, 172, 254, 0.4)",
             }}
           >
-            <Avatar
+            📊
+          </Box>
+          <Box>
+            <Typography
+              variant="h3"
+              fontWeight={800}
               sx={{
-                width: 56,
-                height: 56,
-                background: "var(--success-gradient)",
-                fontSize: "1.5rem",
-                boxShadow: "var(--shadow-medium)",
+                color: "white",
+                textShadow: "0px 4px 12px rgba(0,0,0,0.3)",
+                fontSize: { xs: "1.75rem", sm: "2.25rem", md: "2.75rem" },
+                lineHeight: 1.2,
               }}
             >
-              📊
-            </Avatar>
-            <Box>
-              <Typography
-                variant="h3"
-                fontWeight={800}
-                sx={{
-                  background:
-                    "linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                  textShadow: "0px 4px 8px rgba(0,0,0,0.3)",
-                  fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
-                }}
-                className="slide-in-right"
-              >
-                Sales Analytics Dashboard
-              </Typography>
-            </Box>
-          </Box>
-          <Typography
-            sx={{
-              mt: 1,
-              color: "rgba(255, 255, 255, 0.9)",
-              fontSize: "1.1rem",
-              fontWeight: 400,
-              textShadow: "0px 2px 4px rgba(0,0,0,0.2)",
-            }}
-            className="slide-in-right"
-          >
-            Monitor product performance, revenue trends & regional insights with
-            real-time analytics
-          </Typography>
-
-          <Box sx={{ mt: 2, display: "flex", gap: 1, flexWrap: "wrap" }}>
-            <Chip
-              label="Real-time Data"
-              size="small"
-              sx={{
-                background: "rgba(255, 255, 255, 0.2)",
-                color: "white",
-                fontWeight: 500,
-                backdropFilter: "blur(10px)",
-              }}
-            />
-            <Chip
-              label="Interactive Charts"
-              size="small"
-              sx={{
-                background: "rgba(255, 255, 255, 0.2)",
-                color: "white",
-                fontWeight: 500,
-                backdropFilter: "blur(10px)",
-              }}
-            />
-            <Chip
-              label="Smart Filtering"
-              size="small"
-              sx={{
-                background: "rgba(255, 255, 255, 0.2)",
-                color: "white",
-                fontWeight: 500,
-                backdropFilter: "blur(10px)",
-              }}
-            />
+              Sales Analytics Dashboard
+            </Typography>
           </Box>
         </Box>
-      </Fade>
+        <Typography
+          sx={{
+            mt: 1,
+            color: "rgba(255, 255, 255, 0.95)",
+            fontSize: { xs: "0.95rem", sm: "1rem" },
+            fontWeight: 500,
+            textShadow: "0px 2px 8px rgba(0,0,0,0.4)",
+            maxWidth: "800px",
+          }}
+        >
+          Monitor product performance, revenue trends & regional insights with real-time analytics
+        </Typography>
+
+        <Box sx={{ mt: 2, display: "flex", gap: 1, flexWrap: "wrap" }}>
+          {["Real-time Data", "Interactive Charts", "Smart Filtering"].map((label, i) => (
+            <Chip
+              key={i}
+              label={label}
+              size="small"
+              sx={{
+                background: "rgba(255, 255, 255, 0.25)",
+                color: "white",
+                fontWeight: 600,
+                backdropFilter: "blur(10px)",
+                border: "1px solid rgba(255, 255, 255, 0.3)",
+              }}
+            />
+          ))}
+        </Box>
+      </MotionBox>
 
       <Grid container spacing={4} sx={{ position: "relative", zIndex: 1 }}>
-        {/* Enhanced File Upload Section */}
-        <Grid item xs={12}>
-          <Zoom in timeout={600}>
-            <Card
-              className="glass-effect"
-              sx={{
-                p: 4,
-                borderRadius: "24px",
-                transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                "&:hover": {
-                  transform: "translateY(-4px)",
-                  boxShadow: "var(--shadow-hard)",
-                },
-              }}
-            >
-              <Box
-                sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}
-              >
-                <Avatar sx={{ background: "var(--primary-gradient)" }}>
-                  📁
-                </Avatar>
-                <Typography variant="h5" fontWeight={700} color="white">
-                  Upload Sales Data
-                </Typography>
-              </Box>
-              <FileUpload onUpload={() => setRefresh(!refresh)} />
-            </Card>
-          </Zoom>
-        </Grid>
-
-        {/* Enhanced Summary Cards */}
-        <Grid item xs={12} md={6} lg={6}>
-          <Fade in timeout={700}>
-            <Card
-              sx={{
-                p: 4,
-                borderRadius: "24px",
-                background: "var(--dark-gradient)",
-                color: "white",
-                boxShadow: "var(--shadow-hard)",
-                textAlign: "center",
-                position: "relative",
-                overflow: "hidden",
-                transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                "&:hover": {
-                  transform: "translateY(-6px) scale(1.02)",
-                  boxShadow: "0 25px 70px rgba(0,0,0,0.3)",
-                },
-                "&::before": {
-                  content: '""',
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  height: "4px",
-                  background: "linear-gradient(90deg, #4b79a1, #283e51)",
-                },
-              }}
-            >
-              <Typography variant="h6" fontWeight={600} mb={2}>
-                📈 Total Sales
-              </Typography>
-              <Typography
-                variant="h2"
-                fontWeight={800}
-                mb={1}
+        {/* File Upload Section */}
+        <Grid size={12} ref={uploadRef}>
+          <MotionCard
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            sx={{
+              p: 3,
+              borderRadius: "20px",
+              background: "rgba(255, 255, 255, 0.95)",
+              backdropFilter: "blur(20px)",
+              boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
+              transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+              "&:hover": {
+                transform: "translateY(-2px)",
+                boxShadow: "0 8px 25px rgba(0,0,0,0.15)",
+              },
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
+              <Avatar
                 sx={{
-                  background:
-                    "linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
+                  background: "linear-gradient(135deg, #667eea, #764ba2)",
+                  width: 40,
+                  height: 40,
                 }}
               >
-                {totals.totalSales?.toLocaleString() || 0}
-              </Typography>
-              <Typography sx={{ opacity: 0.8, fontWeight: 500 }}>
-                Units sold across all products
-              </Typography>
-            </Card>
-          </Fade>
-        </Grid>
-
-        <Grid item xs={12} md={6} lg={6}>
-          <Fade in timeout={900}>
-            <Card
-              sx={{
-                p: 4,
-                borderRadius: "24px",
-                background: "var(--success-gradient)",
-                color: "white",
-                boxShadow: "var(--shadow-hard)",
-                textAlign: "center",
-                position: "relative",
-                overflow: "hidden",
-                transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                "&:hover": {
-                  transform: "translateY(-6px) scale(1.02)",
-                  boxShadow: "0 25px 70px rgba(0,0,0,0.3)",
-                },
-                "&::before": {
-                  content: '""',
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  height: "4px",
-                  background: "linear-gradient(90deg, #4facfe, #00f2fe)",
-                },
-              }}
-            >
-              <Typography variant="h6" fontWeight={600} mb={2}>
-                💰 Total Revenue
-              </Typography>
+                📁
+              </Avatar>
               <Typography
-                variant="h2"
-                fontWeight={800}
-                mb={1}
-                sx={{
-                  background:
-                    "linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
+                variant="h6"
+                style={{
+                  fontWeight: 700,
+                  color: "#000000",
+                  fontSize: "1.1rem",
                 }}
               >
-                ₹{totals.totalRevenue?.toLocaleString() || 0}
+                Upload Sales Data
               </Typography>
-              <Typography sx={{ opacity: 0.8, fontWeight: 500 }}>
-                Nationwide revenue summary
+            </Box>
+            <FileUpload 
+              onUpload={() => setRefresh(!refresh)} 
+              scrollToCharts={scrollToCharts}
+            />
+          </MotionCard>
+        </Grid>
+
+        {/* Summary Cards */}
+        <Grid size={{ xs: 12, md: 6 }} ref={summaryRef}>
+          <StatCard
+            title="📈 Total Sales"
+            value={formatNumber(totals.totalQuantity || 0)}
+            subtitle="Units sold across all products"
+            gradient="var(--dark-gradient)"
+            delay={0.2}
+          />
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 6 }}>
+          <StatCard
+            title="💰 Total Revenue"
+            value={formatCurrency(totals.totalRevenue || 0)}
+            subtitle="Nationwide revenue summary"
+            gradient="var(--success-gradient)"
+            delay={0.3}
+          />
+        </Grid>
+
+        {/* Filters */}
+        <Grid size={12}>
+          <MotionCard
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            sx={{
+              p: 3,
+              borderRadius: "20px",
+              background: "rgba(255, 255, 255, 0.95)",
+              backdropFilter: "blur(20px)",
+              boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
+              transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+              "&:hover": {
+                transform: "translateY(-2px)",
+                boxShadow: "0 8px 25px rgba(0,0,0,0.15)",
+              },
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
+              <Avatar
+                sx={{
+                  background: "linear-gradient(135deg, #43e97b, #38f9d7)",
+                  width: 40,
+                  height: 40,
+                }}
+              >
+                🔍
+              </Avatar>
+              <Typography
+                variant="h6"
+                style={{
+                  fontWeight: 700,
+                  color: "#000000",
+                  fontSize: "1.1rem",
+                }}
+              >
+                Advanced Filters
               </Typography>
-            </Card>
-          </Fade>
+            </Box>
+            <Filters />
+          </MotionCard>
         </Grid>
 
-        {/* Enhanced Filters */}
-        <Grid item xs={12}>
-          <Zoom in timeout={700}>
-            <Card
-              className="glass-effect"
-              sx={{
-                p: 4,
-                borderRadius: "24px",
-                transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                "&:hover": {
-                  transform: "translateY(-2px)",
-                  boxShadow: "var(--shadow-medium)",
-                },
-              }}
-            >
-              <Box
-                sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}
-              >
-                <Avatar sx={{ background: "var(--warning-gradient)" }}>
-                  🔍
-                </Avatar>
-                <Typography variant="h5" fontWeight={700} color="white">
-                  Advanced Filters
-                </Typography>
-              </Box>
-              <Filters
-                onFilterChange={(filters) => dispatch(fetchSales(filters))}
-              />
-            </Card>
-          </Zoom>
+        {/* Chart Cards */}
+        <Grid size={{ xs: 12, lg: 6 }} ref={chartsRef}>
+          <ChartCard title="Monthly Revenue Trend" icon="📈" delay={0.5}>
+            <RevenueLineChart data={trend} />
+          </ChartCard>
         </Grid>
 
-        {/* Enhanced Chart Cards */}
-        <Grid item xs={12} lg={6}>
-          <Fade in timeout={800}>
-            <Card
-              sx={{
-                p: 4,
-                height: 480,
-                borderRadius: "24px",
-                background: "rgba(255, 255, 255, 0.95)",
-                backdropFilter: "blur(20px)",
-                boxShadow: "var(--shadow-medium)",
-                transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                "&:hover": {
-                  transform: "translateY(-4px)",
-                  boxShadow: "var(--shadow-hard)",
-                },
-              }}
-            >
-              <Box
-                sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}
-              >
-                <Avatar
-                  sx={{
-                    background: "var(--primary-gradient)",
-                    width: 40,
-                    height: 40,
-                  }}
-                >
-                  📈
-                </Avatar>
-                <Typography variant="h6" fontWeight={700} color="#2c3e50">
-                  Monthly Revenue Trend
-                </Typography>
-              </Box>
-              <RevenueLineChart data={trend} />
-            </Card>
-          </Fade>
+        <Grid size={{ xs: 12, lg: 6 }}>
+          <ChartCard title="Product-wise Sales" icon="🛒" delay={0.6}>
+            <ProductBarChart data={data} />
+          </ChartCard>
         </Grid>
 
-        <Grid item xs={12} lg={6}>
-          <Fade in timeout={1000}>
-            <Card
-              sx={{
-                p: 4,
-                height: 480,
-                borderRadius: "24px",
-                background: "rgba(255, 255, 255, 0.95)",
-                backdropFilter: "blur(20px)",
-                boxShadow: "var(--shadow-medium)",
-                transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                "&:hover": {
-                  transform: "translateY(-4px)",
-                  boxShadow: "var(--shadow-hard)",
-                },
-              }}
-            >
-              <Box
-                sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}
-              >
-                <Avatar
-                  sx={{
-                    background: "var(--secondary-gradient)",
-                    width: 40,
-                    height: 40,
-                  }}
-                >
-                  🛒
-                </Avatar>
-                <Typography variant="h6" fontWeight={700} color="#2c3e50">
-                  Product-wise Sales
-                </Typography>
-              </Box>
-              <ProductBarChart data={data} showAllLabels />
-            </Card>
-          </Fade>
-        </Grid>
-
-        <Grid item xs={12}>
-          <Fade in timeout={1100}>
-            <Card
-              sx={{
-                p: 4,
-                height: 520,
-                borderRadius: "24px",
-                background: "rgba(255, 255, 255, 0.95)",
-                backdropFilter: "blur(20px)",
-                boxShadow: "var(--shadow-medium)",
-                transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                "&:hover": {
-                  transform: "translateY(-4px)",
-                  boxShadow: "var(--shadow-hard)",
-                },
-              }}
-            >
-              <Box
-                sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}
-              >
-                <Avatar
-                  sx={{
-                    background: "var(--warning-gradient)",
-                    width: 40,
-                    height: 40,
-                  }}
-                >
-                  🌍
-                </Avatar>
-                <Typography variant="h6" fontWeight={700} color="#2c3e50">
-                  Region-wise Revenue Distribution
-                </Typography>
-              </Box>
-              <RegionPieChart data={data} />
-            </Card>
-          </Fade>
+        <Grid size={12}>
+          <ChartCard title="Region-wise Revenue Distribution" icon="🌍" height={520} delay={0.7}>
+            <RegionPieChart data={data} />
+          </ChartCard>
         </Grid>
       </Grid>
     </Box>

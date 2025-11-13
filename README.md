@@ -1,70 +1,202 @@
-# Getting Started with Create React App
+# 📊 Sales Analytics Dashboard
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern, full-stack sales analytics dashboard built with React, Redux, Material-UI, and Node.js. Features real-time data visualization, interactive charts, and advanced filtering capabilities.
 
-## Available Scripts
+## ✨ Features
 
-In the project directory, you can run:
+- 📈 **Real-time Analytics** - Monitor sales performance with live data updates
+- 📊 **Interactive Charts** - Beautiful visualizations using Recharts
+  - Revenue trend line charts
+  - Product-wise bar charts
+  - Region-wise pie charts
+- 🔍 **Advanced Filtering** - Filter by category, region, and date range
+- 📁 **File Upload** - Support for CSV and Excel files with drag-and-drop
+- 🎨 **Modern UI** - Glassmorphism design with smooth animations
+- 📱 **Responsive Design** - Works seamlessly on all devices
+- ⚡ **Performance Optimized** - Fast loading and smooth interactions
 
-### `npm start`
+## 🛠️ Tech Stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Frontend
+- React 19
+- Redux Toolkit
+- Material-UI (MUI)
+- Recharts
+- Framer Motion
+- Axios
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Backend
+- Node.js
+- Express
+- MongoDB with Mongoose
+- Multer (file uploads)
+- XLSX & CSV Parser
 
-### `npm test`
+## 🚀 Getting Started
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Prerequisites
+- Node.js (v14 or higher)
+- MongoDB (local or Atlas)
+- npm or yarn
 
-### `npm run build`
+### Installation
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. **Clone the repository**
+```bash
+git clone <repository-url>
+cd sales-revenue-dashboard
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+2. **Install frontend dependencies**
+```bash
+npm install
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+3. **Install backend dependencies**
+```bash
+cd backend
+npm install
+```
 
-### `npm run eject`
+4. **Configure environment variables**
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Create `.env` in the root directory:
+```env
+REACT_APP_API_URL=http://localhost:5000
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Create `backend/.env`:
+```env
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+NODE_ENV=development
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Running the Application
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+1. **Start the backend server**
+```bash
+cd backend
+node server.js
+```
+Backend will run on http://localhost:5000
 
-## Learn More
+2. **Start the frontend (in a new terminal)**
+```bash
+npm start
+```
+Frontend will run on http://localhost:3000
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 📁 Project Structure
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
+sales-revenue-dashboard/
+├── backend/
+│   ├── controllers/      # Business logic
+│   ├── models/          # MongoDB schemas
+│   ├── routes/          # API routes
+│   ├── uploads/         # Temporary file storage
+│   ├── app.js           # Express app setup
+│   └── server.js        # Server entry point
+├── src/
+│   ├── components/      # React components
+│   │   ├── common/      # Reusable components
+│   │   ├── FileUpload.jsx
+│   │   ├── Filters.jsx
+│   │   └── Charts/
+│   ├── pages/           # Page components
+│   ├── redux/           # Redux store & slices
+│   ├── utils/           # Helper functions
+│   │   ├── constants.js
+│   │   ├── helpers.js
+│   │   └── chartHelpers.js
+│   ├── App.js
+│   └── index.js
+└── public/
+```
 
-### Code Splitting
+## 🎯 API Endpoints
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Sales Endpoints
+- `POST /api/sales/upload` - Upload CSV/Excel file
+- `GET /api/sales/totals` - Get total sales and revenue
+- `GET /api/sales/filter` - Filter sales data
+- `GET /api/sales/trend` - Get revenue trends (daily/monthly)
+- `GET /api/sales/meta` - Get categories and regions
 
-### Analyzing the Bundle Size
+### Health Check
+- `GET /health` - Server health status
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 📊 Data Format
 
-### Making a Progressive Web App
+### CSV/Excel File Format
+```csv
+date,product,category,region,quantity,price,revenue
+2024-01-01,Laptop,Electronics,East,5,50000,250000
+2024-01-02,Phone,Electronics,West,10,30000,300000
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## 🎨 Key Features Explained
 
-### Advanced Configuration
+### File Upload
+- Drag-and-drop support
+- File validation (CSV, XLSX, XLS)
+- Size limit: 10MB
+- Real-time upload progress
+- Automatic dashboard refresh
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Filtering
+- Filter by category
+- Filter by region
+- Date range selection
+- Real-time data updates
+- Clear all filters option
 
-### Deployment
+### Charts
+- **Revenue Line Chart**: Monthly revenue trends
+- **Product Bar Chart**: Sales by product with scrollable view
+- **Region Pie Chart**: Revenue distribution by region
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## 🔧 Configuration
 
-### `npm run build` fails to minify
+### Frontend Configuration
+Edit `src/utils/constants.js` to customize:
+- API endpoints
+- Chart colors
+- File upload limits
+- Date formats
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Backend Configuration
+Edit `backend/app.js` and `backend/server.js` for:
+- CORS settings
+- Port configuration
+- Database connection
+- File upload settings
+
+## 🚀 Deployment
+
+### Frontend Deployment
+```bash
+npm run build
+```
+Deploy the `build` folder to your hosting service (Vercel, Netlify, etc.)
+
+### Backend Deployment
+1. Set environment variables on your hosting platform
+2. Ensure MongoDB is accessible
+3. Deploy to Heroku, Railway, or similar services
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📝 License
+
+This project is licensed under the MIT License.
+
+## 🙏 Acknowledgments
+
+- Material-UI for the component library
+- Recharts for beautiful charts
+- MongoDB for the database
+- Create React App for the boilerplate

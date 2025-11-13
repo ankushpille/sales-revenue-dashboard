@@ -7,6 +7,9 @@ import {
   YAxis,
 } from "recharts";
 import { Box, Typography } from "@mui/material";
+import { formatTrendData } from "../utils/chartHelpers";
+import { formatCurrency } from "../utils/helpers";
+import EmptyState from "./common/EmptyState";
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
@@ -25,7 +28,7 @@ const CustomTooltip = ({ active, payload, label }) => {
           {label}
         </Typography>
         <Typography variant="body2" color="#667eea" fontWeight={500}>
-          Revenue: ₹{payload[0].value.toLocaleString()}
+          Revenue: {formatCurrency(payload[0].value)}
         </Typography>
       </Box>
     );
@@ -33,35 +36,12 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-export default function RevenueLineChart({ data }) {
-  const chartData = data.map((item) => ({
-    date: item.date,
-    revenue: item.revenue,
-  }));
-
-  if (!chartData.length) {
-    return (
-      <Box
-        sx={{
-          height: 300,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
-          borderRadius: "16px",
-          border: "1px solid rgba(255, 255, 255, 0.2)",
-        }}
-      >
-        <Typography
-          variant="h6"
-          color="text.secondary"
-          className="float-animation"
-        >
-          📈 No revenue data available
-        </Typography>
-      </Box>
-    );
+export default function RevenueLineChart({ data = [] }) {
+  if (!data.length) {
+    return <EmptyState icon="📈" message="No revenue data available" />;
   }
+
+  const chartData = formatTrendData(data);
 
   return (
     <Box

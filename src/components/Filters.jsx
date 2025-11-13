@@ -1,9 +1,9 @@
-import { Box, Button, Chip, MenuItem, TextField, } from "@mui/material";
+import { Box, Button, Chip, MenuItem, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
-
 import axios from "axios";
 import { fetchSales } from "../redux/slices/salesSlice";
 import { useDispatch } from "react-redux";
+import { API_BASE_URL, API_ENDPOINTS } from "../utils/constants";
 
 const StyledTextField = ({ label, children, ...props }) => (
   <TextField
@@ -14,30 +14,31 @@ const StyledTextField = ({ label, children, ...props }) => (
     sx={{
       minWidth: 180,
       '& .MuiOutlinedInput-root': {
-        background: 'rgba(255, 255, 255, 0.8)',
+        background: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(10px)',
         borderRadius: '12px',
         '& fieldset': {
-          borderColor: 'rgba(255, 255, 255, 0.3)',
+          borderColor: 'rgba(0, 0, 0, 0.2)',
         },
         '&:hover fieldset': {
-          borderColor: 'rgba(255, 255, 255, 0.5)',
+          borderColor: 'rgba(0, 0, 0, 0.4)',
         },
         '&.Mui-focused fieldset': {
           borderColor: '#667eea',
           borderWidth: '2px',
         },
-        '& .MuiInputLabel-root': {
-          color: 'rgba(255, 255, 255, 0.8)',
-          '&.Mui-focused': {
-            color: '#667eea',
-          },
-        },
         '& .MuiInputBase-input': {
-          color: '#2c3e50',
-          fontWeight: 500,
+          color: '#000000',
+          fontWeight: 600,
         },
         transition: 'all 0.3s ease',
+      },
+      '& .MuiInputLabel-root': {
+        color: '#000000',
+        fontWeight: 600,
+        '&.Mui-focused': {
+          color: '#667eea',
+        },
       },
     }}
   >
@@ -60,11 +61,13 @@ export default function Filters() {
   useEffect(() => {
     const loadMetaData = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/sales/meta");
+        const res = await axios.get(`${API_BASE_URL}${API_ENDPOINTS.SALES_META}`);
         setCategories(res.data.categories || []);
         setRegions(res.data.regions || []);
       } catch (error) {
         console.error("Error loading metadata:", error);
+        setCategories([]);
+        setRegions([]);
       }
     };
     loadMetaData();
@@ -108,32 +111,33 @@ export default function Filters() {
           icon={<span>📂</span>}
           label={`${categories.length} Categories`}
           size="small"
-          sx={{
-            background: 'rgba(255, 255, 255, 0.2)',
-            color: 'white',
-            fontWeight: 500,
+          style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            color: '#000000',
+            fontWeight: 600,
+            border: '1px solid rgba(0, 0, 0, 0.1)',
           }}
         />
         <Chip
           icon={<span>🌍</span>}
           label={`${regions.length} Regions`}
           size="small"
-          sx={{
-            background: 'rgba(255, 255, 255, 0.2)',
-            color: 'white',
-            fontWeight: 500,
+          style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            color: '#000000',
+            fontWeight: 600,
+            border: '1px solid rgba(0, 0, 0, 0.1)',
           }}
         />
         {hasActiveFilters && (
           <Chip
             label="Filters Active"
             size="small"
-            color="secondary"
-            variant="filled"
-            sx={{
-              background: 'rgba(255, 255, 255, 0.3)',
-              color: 'white',
-              fontWeight: 600,
+            style={{
+              backgroundColor: 'rgba(67, 233, 123, 0.8)',
+              color: '#000000',
+              fontWeight: 700,
+              border: '1px solid rgba(0, 0, 0, 0.1)',
             }}
           />
         )}
@@ -224,16 +228,18 @@ export default function Filters() {
           variant="contained"
           onClick={applyFilters}
           sx={{
-            background: "var(--primary-gradient)",
-            borderRadius: "12px",
-            padding: "10px 24px",
-            fontWeight: 600,
+            background: "linear-gradient(135deg, #667eea, #764ba2)",
+            borderRadius: "10px",
+            padding: "10px 20px",
+            fontWeight: 700,
             textTransform: "none",
+            color: "#FFFFFF",
             boxShadow: "0 4px 15px rgba(102, 126, 234, 0.4)",
             transition: "all 0.3s ease",
             "&:hover": {
               transform: "translateY(-2px)",
               boxShadow: "0 8px 25px rgba(102, 126, 234, 0.6)",
+              background: "linear-gradient(135deg, #5a6fd8, #6a4190)",
             },
           }}
           startIcon={<span>🔍</span>}
@@ -246,19 +252,18 @@ export default function Filters() {
             variant="outlined"
             onClick={clearFilters}
             sx={{
-              color: "white",
-              borderColor: "rgba(255, 255, 255, 0.5)",
-              borderRadius: "12px",
-              padding: "10px 24px",
-              fontWeight: 600,
+              color: "#000000",
+              borderColor: "rgba(0, 0, 0, 0.3)",
+              borderRadius: "10px",
+              padding: "10px 20px",
+              fontWeight: 700,
               textTransform: "none",
-              background: "rgba(255, 255, 255, 0.1)",
-              backdropFilter: "blur(10px)",
+              background: "rgba(255, 255, 255, 0.9)",
               transition: "all 0.3s ease",
               "&:hover": {
-                background: "rgba(255, 255, 255, 0.2)",
+                background: "rgba(255, 255, 255, 1)",
                 transform: "translateY(-2px)",
-                borderColor: "rgba(255, 255, 255, 0.7)",
+                borderColor: "rgba(0, 0, 0, 0.5)",
               },
             }}
             startIcon={<span>🔄</span>}

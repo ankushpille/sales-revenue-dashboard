@@ -1,18 +1,8 @@
 import { Box, Typography } from "@mui/material";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
-
-const COLORS = [
-  "#667eea",
-  "#764ba2",
-  "#f093fb",
-  "#f5576c",
-  "#4facfe",
-  "#00f2fe",
-  "#43e97b",
-  "#38f9d7",
-  "#fa709a",
-  "#fee140",
-];
+import { aggregateByRegion, getChartColor } from "../utils/chartHelpers";
+import { formatCurrency } from "../utils/helpers";
+import EmptyState from "./common/EmptyState";
 
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
@@ -32,7 +22,7 @@ const CustomTooltip = ({ active, payload }) => {
           {data.name}
         </Typography>
         <Typography variant="body2" color="#667eea" fontWeight={500}>
-          Revenue: ₹{data.value.toLocaleString()}
+          Revenue: {formatCurrency(data.value)}
         </Typography>
         <Typography variant="caption" color="text.secondary">
           {data.percent ? `${(data.percent * 100).toFixed(1)}%` : ""}
@@ -120,43 +110,12 @@ const CustomLegend = ({ payload }) => {
   );
 };
 
-export default function RegionPieChart({ data }) {
-  const regions = {};
-
-  data.forEach((item) => {
-    regions[item.region] = (regions[item.region] || 0) + item.revenue;
-  });
-
-  const chartData = Object.entries(regions)
-    .map(([region, revenue]) => ({
-      name: region,
-      value: revenue,
-    }))
-    .sort((a, b) => b.value - a.value);
-
-  if (!chartData.length) {
-    return (
-      <Box
-        sx={{
-          height: 300,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
-          borderRadius: "16px",
-          border: "1px solid rgba(255, 255, 255, 0.2)",
-        }}
-      >
-        <Typography
-          variant="h6"
-          color="text.secondary"
-          className="float-animation"
-        >
-          🌍 No regional data available
-        </Typography>
-      </Box>
-    );
+export default function RegionPieChart({ data = [] }) {
+  if (!data.length) {
+    return <EmptyState icon="🌍" message="No regional data available" />;
   }
+
+  const chartData = aggregateByRegion(data);
 
   return (
     <Box
@@ -184,7 +143,7 @@ export default function RegionPieChart({ data }) {
             {chartData.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}
-                fill={COLORS[index % COLORS.length]}
+                fill={getChartColor(index)}
                 style={{
                   filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))",
                   transition: "all 0.3s ease",
@@ -198,7 +157,7 @@ export default function RegionPieChart({ data }) {
       <CustomLegend
         payload={chartData.map((entry, index) => ({
           value: entry.name,
-          color: COLORS[index % COLORS.length],
+          color: getChartColor(index),
         }))}
       />
     </Box>

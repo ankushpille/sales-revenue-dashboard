@@ -1,5 +1,8 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { Box, Typography } from "@mui/material";
+import { aggregateByProduct, getChartColor } from "../utils/chartHelpers";
+import { formatNumber } from "../utils/helpers";
+import EmptyState from "./common/EmptyState";
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
@@ -18,7 +21,7 @@ const CustomTooltip = ({ active, payload, label }) => {
           {label}
         </Typography>
         <Typography variant="body2" color="#667eea" fontWeight={500}>
-          Sales: {payload[0].value} units
+          Sales: {formatNumber(payload[0].value)} units
         </Typography>
       </Box>
     );
@@ -26,51 +29,12 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-const colors = [
-  '#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe',
-  '#00f2fe', '#43e97b', '#38f9d7', '#fa709a', '#fee140',
-  '#a8edea', '#fed6e3', '#d299c2', '#fef9d7', '#8ec5fc'
-];
-
 export default function ProductBarChart({ data = [] }) {
   if (!data.length) {
-    return (
-      <Box
-        sx={{
-          height: 350,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-          borderRadius: '16px',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-        }}
-      >
-        <Typography variant="h6" color="text.secondary" className="float-animation">
-          📊 No product data available
-        </Typography>
-      </Box>
-    );
+    return <EmptyState icon="📊" message="No product data available" />;
   }
 
-  // ✅ Group by product
-  const chartData = data.reduce((acc, item) => {
-    const productName = String(item.product || "");
-    const existing = acc.find((p) => p.product === productName);
-
-    if (existing) {
-      existing.quantity += item.quantity;
-    } else {
-      acc.push({
-        product: productName,
-        quantity: item.quantity,
-      });
-    }
-    return acc;
-  }, []);
-
-  // Sort by quantity for better visualization
-  chartData.sort((a, b) => b.quantity - a.quantity);
+  const chartData = aggregateByProduct(data);
 
   return (
     <Box
@@ -139,7 +103,7 @@ export default function ProductBarChart({ data = [] }) {
               {chartData.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}
-                  fill={colors[index % colors.length]}
+                  fill={getChartColor(index)}
                   style={{
                     filter: 'drop-shadow(0px 4px 8px rgba(0,0,0,0.1))',
                     transition: 'all 0.3s ease'
